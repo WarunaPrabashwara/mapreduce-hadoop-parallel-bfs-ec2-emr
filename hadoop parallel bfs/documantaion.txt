@@ -1,0 +1,278 @@
+ putty wala pem file upport naha 
+but mobaxterm wla suport wage . so api ee widihata daala hadamu ssh connection ekak 
+https://angus.readthedocs.io/en/2016/amazon/log-in-with-mobaxterm-win.html
+me site eke  tyenwa daana widiha 
+anyway 
+Server refused our key
+https://la60312.medium.com/use-pem-file-in-mobaxterm-to-connect-ec2-machine-in-aws-bb2d6e9cac28
+me site eke hatiyata open ssl daala ape file eka change karala balamu hariyada kyla 
+
+openssl rsa -in s32-cosc2637.pem -out my.key
+
+[cent os eken karagena aaya gamu download karala
+vm on kara kara inn oni nah 
+https://www.sslshopper.com/ssl-converter.html 
+me site eke tyenwa online converter ekak 
+online sarthaka naha so linux ma karamu
+]
+
+ilagata ee key file eka damma balanna 
+
+
+ilagata port eka 22 kala 
+ip ekata
+ec2-user@sXXXXXXX.jump.cosc2637.route53.aws.rmit.edu.au
+eeth server refused key
+
+
+
+
+
+https://www.itzgeek.com/how-tos/linux/ubuntu-how-tos/install-apache-hadoop-ubuntu-14-10-centos-7-single-node-cluster.html
+meeka balaana hadoop install kala 
+
+mapred-site.xml kiyala ekak thibe naha 
+ mapred-site.xml.template
+
+kiyala ekak thibba
+so mama eeke danna kiyala thibba eka dekem a damma 
+
+
+site eke thibbata  http://ip.ad.dre.ss:9870/ balanna kiyala 
+50075 thama wAda kalee 
+mama danne naha ayi kiyala 
+netstat -pnltu
+gahala thama me port eka hari hooya gatthe
+ 
+
+mokak hari up kala gaman ip eka check ikaranna epa 
+poddak inna eeka up wenakan hode
+
+
+
+
+
+hadoop streaming jar eka thiyena thana hoyaagattha
+
+ls $HADOOP_HOME/share/hadoop/tools/lib 
+gahala balann 
+hadoop-streaming-2.10.1.jar
+wage ekak tyenw a
+
+
+python file okkogema udata  #!/usr/bin/python
+
+chmod a+x reducer.py  
+chmod a+x mapper.py 
+ 
+ 
+
+so mama local host eke podi welawakata bash file eka mehema wenas karanwa
+
+
+
+#!/bin/bash
+i=1
+while :
+do
+	hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.10.1.jar \
+	-D mapred.reduce.tasks=1 \
+	-D mapred.text.key.partitioner.options=-k1 \
+	-file graph.txt \
+	-mapper ./mapper.py \
+	-file ./reducer.py \
+	-input /distances.txt \
+	-output /mapreduce-output$i \
+	-partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
+	
+	rm -f output.txt
+	hadoop fs -copyToLocal /mapreduce-output$i/part-00000 output.txt
+
+	seeiftrue=python driver.py
+
+	if [ $seeiftrue = 1]
+	then
+		rm output.txt
+		hadoop fs -copyToLocal /mapreduce-output$i/part-00000 output.txt
+		break
+	else
+		rm output.txt
+		hadoop fs -copyToLocal /mapreduce-output$i/part-00000 output.txt
+	fi
+	i=$((i+1))
+done
+
+
+
+
+
+
+
+ 
+
+
+cluster ekata file toika copy karanne mehemai 
+
+[ec2-user@ip-192-168-15-230 ~]$ scp -i s37-cosc2637.pem -r ass2 hadoop@s332.emr.cosc2637.route53.aws.rmit.edu.au:ass2
+
+[ pem file eke permission change kalaa hode 
+  $ chmod 400 xxx-xxx.pem  ]
+
+
+dan cluster ekedi bash eketh permission wenas karanna oni 
+
+chmod +x run.sh 
+e wage ma python file walath chage karanna oni 
+
+chmod 744 mapper.py
+chmod 744 reducer.py
+chmod 744 driver.py
+
+
+
+
+
+22/09/22 06:10:45 ERROR streaming.StreamJob: Error Launching job : Input path does not exist: hdfs://ip-192-168-20-23.ec2.internal:80/user/hadoop/graph.txt
+
+kiyala error ekak enwa emr cluster ekata ssh aran ./run.sh karaama
+
+ee nisa mama graph ekata adala inpyt file eka hue site ekata upload kalaa
+
+http://s375.hue.cosc2637.route53.aws.rmit.edu.au:8888/hue/filebrowser/view=%2Fuser%2Fs32#/user/hadoop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Error: java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 2
+        at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:325)
+        at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:538)
+        at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:130)
+        at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:61)
+        at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+        at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:461)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:344)
+        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
+        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
+
+22/09/22 06:54:35 INFO mapreduce.Job: Task Id : attempt_1663822811330_0006_m_000000_0, Status : FAILED
+Error: java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 2
+        at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:325)
+        at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:538)
+        at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:130)
+        at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:61)
+        at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+        at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:461)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:344)
+        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
+        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
+
+
+
+mehema error ekak aawa 
+eeka google eke thibba 
+
+
+
+
+Make sure that the both the mapper and the reducer files are executable using chmod. (Eg: 'chmod 744 mapper.py')
+
+
+mehema ekak awa
+
+
+22/09/22 07:00:18 ERROR streaming.StreamJob: Error Launching job : Output directory hdfs://ip-192-168-20-23.ec2.internal:8020/mapreduce-output2 already exists
+Streaming Command Failed!
+
+mehema case ekak awoth 
+
+
+hue site ekata gihilla folderwise / ta giyaama tyena hAdila tyena foldedr deka delete karala daanna 
+
+
+
+
+
+
+
+
+
+
+
+22/09/22 08:04:30 INFO mapreduce.Job: Task Id : attempt_1663832907708_0004_m_000000_0, Status : FAILED
+Error: java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 2
+        at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:325)
+        at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:538)
+        at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:130)
+        at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:61)
+        at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+        at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:461)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:344)
+        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
+        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
+
+22/09/22 08:04:31 INFO mapreduce.Job: Task Id : attempt_1663832907708_0004_m_000001_0, Status : FAILED
+Error: java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 2
+        at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:325)
+        at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:538)
+        at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:130)
+        at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:61)
+        at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+        at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:461)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:344)
+        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
+        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
+
+
+aaya aawa
+
+
+
+#!/usr/bin/env python3
+
+meeka file okkogema udin add karanna kiyala thama kiyanne 
+
+
+hethuwa hamba una 
+
+
+https://stackoverflow.com/questions/43048654/hadoop-python-subprocess-failed-with-code-127
+meke mulin tyena widihata 
+mama 
+CRLF to LF  karanna balala ita passe
+
+site ekak balaagena 
+sed 's/^M$//' reducer.py  
+wage okkoma file tika hArewwa
+it worked
+
+
+
+
+
+crlf lf karaddi uda eewa hariyata wenne naha 
+wAda naha 
+so mama kale vs code ekema yata tyenawa crlf lf karanna 
+eeka use karala wAde karaa

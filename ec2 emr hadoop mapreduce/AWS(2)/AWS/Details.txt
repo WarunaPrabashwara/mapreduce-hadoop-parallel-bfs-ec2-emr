@@ -1,0 +1,4 @@
+Host Name: ec2-user@s32.jump.cosc2637.toute53.aws.rmit.edu.au
+
+
+Try using sudo

@@ -1,0 +1,39 @@
+Student's name :
+
+Student's id : s3
+
+How to run the code :
+                        login to your server using any ssh and ftp client 
+
+                        upload the hadoop-streaming-3.1.4.jar , ass3.zip file and .pem file to your server using ftp
+
+                        change permission of the pem file  with the command 	chmod 400  232-cosc2637.pem
+
+                        now start the emr cluster with the bash script in the current location
+                        
+                        after starting 
+                        use command
+                        scp -i s3 -cosc2637.pem  final.zip hadoop@s37 32.emr.cosc2637.route53.aws.rmit.edu.au:final.zip
+                        scp -i s 232-cosc2637.pem  JAR.zip hadoop@ 32.emr.cosc2637.route53.aws.rmit.edu.au:JAR.zip
+
+                        use browser to see the hue with the link you got after creating the cluster . my link is
+                        http:// 232.hue.cosc2637.route53.aws.rmit.edu.au:8888
+
+
+                        now login via ssh to the emr server using the command you got after creating the cluster 
+                        my command was 		ssh hadoop@s3 232.emr.cosc2637.route53.aws.rmit.edu.au -i s 2-cosc2637.pem
+
+                        unzip the zip file in the root path of the emr cluster
+
+
+                        change permission of the bash file using 	chmod +x run.sh 	command 
+
+                        now add the hadoop-streaming-3.1.4.jar file to the same directory 
+
+                        now go to the link  		http://s3 2.hue.cosc2637.route53.aws.rmit.edu.au:8888/			and upload the M.txt , N.txt and X.txt file to the hadoop folder of the website
+                       
+
+                        now comeback to the ssh client and run  	./run.sh 	in the directory where run.sh was extracted
+
+                        
+                                        
